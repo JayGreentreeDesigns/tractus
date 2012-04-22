@@ -1,3 +1,4 @@
+	<?php $CI =& get_instance(); ?>
 	</div><!--/row-->
  <hr>
 
@@ -6,17 +7,27 @@
       </footer>
 
     </div><!--/.fluid-container-->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+  
+ 
+ 
+ 
+ 
+  	<div class="modal hide fade" id="modal-loading">
+  <div class="modal-header">
+   
+    <h3>Loading</h3>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped
+     active">
+  <div class="bar"
+       style="width: 100%;"></div>
+</div>
+  </div>
+ 
+</div>
+  
     
-     <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    <script src="public/js/bootstrap.js"></script>
-    	<script>
-	$(document).ready(function() {
-	
-	});
-	</script>
+    
   </body>
 </html>

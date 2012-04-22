@@ -1,4 +1,4 @@
-<?php $this->load->view('_templates/header'); ?>
+<?php $this->load->view('_templates/header', array('title' => 'Dashboard')); ?>
 		<div class="span9">
         	<div class="page-header">
 				<h1>Dashboard</h1>

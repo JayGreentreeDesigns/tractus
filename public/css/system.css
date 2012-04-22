@@ -1,0 +1,7 @@
+/* Import all the Bootstrap styles */
+@import "bootstrap.min.css";
+
+
+/* All Other Styles */
+.header-smaller {font-size: 20px; font-weight: normal; padding-left: 20px;}
+.header-smaller-right {float: right}
