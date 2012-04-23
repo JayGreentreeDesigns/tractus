@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><?php echo (!empty($title) ? $title : ''); ?> &#124; Site Title</title>
+    <title><?php echo (!empty($title) ? $title : ''); ?> &#124; <?php echo $CI->config->item('site_title'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -43,7 +43,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="<?php echo site_url(); ?>">TRACTUS</a>
+          <a class="brand" href="<?php echo site_url(); ?>"><?php echo $CI->config->item('site_title'); ?></a>
         
         
           <div class="nav-collapse">
@@ -56,7 +56,7 @@
     <a class="dropdown-toggle"
        data-toggle="dropdown"
        href="#">
-        Andrew Hook
+        <?php echo $CI->session->userdata('tractus_user_name'); ?>
         <b class="caret"></b>
       </a>
     <ul class="dropdown-menu">

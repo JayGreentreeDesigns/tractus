@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Login &#124; Site Title</title>
+    <title>Login &#124; <?php echo $CI->config->item('site_title'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -38,7 +38,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">TRACTUS</a>
+          <a class="brand" href="#"><?php echo $CI->config->item('site_title'); ?></a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -51,10 +51,23 @@
 
     <div class="container">
 
-      <h1>Login</h1>
+      
      
-
-
+	  <?php echo form_open('account/login', array('class' => 'well')); ?>
+	  <h1>Login</h1>
+ 					<label>Email address</label>
+  					<input type="text" class="span3" name="email" placeholder="e.g. test@example.com">
+  					<span class="help-inline">Your email address</span>
+ 				
+ 				<label>Password</label>
+  					<input type="password" class="span3" name="password" placeholder="Password">
+  					<span class="help-inline">Your password</span>
+ 				
+<div>
+  
+  <button type="submit" name="submit" value="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
     </div> <!-- /container -->
 
 	<div class="modal hide fade" id="modal-help">

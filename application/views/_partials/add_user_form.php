@@ -21,7 +21,7 @@
  			
  			
  			<label>Role</label>
-  			<select id="user_role" name="user_role" id="user_role" class="span3">
+  			<select name="user_role" id="user_role" class="span3">
   				<?php foreach($roles as $key => $value) : ?>
   				<option value="<?php echo $key; ?>"><?php echo $value; ?></option>
   				<?php endforeach; ?>

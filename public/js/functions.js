@@ -1,6 +1,8 @@
 var glob_offset = 0;
+var glob_sort = '';
+var glob_order = '';
 
-function load_users(url, action) {
+function load_users(url, action, sort) {
 	
 	$('#modal-loading').modal();
 	
@@ -17,11 +19,34 @@ function load_users(url, action) {
 		glob_offset = glob_offset + 10;
 	}
 	
+	if(sort) {
+		glob_sort = sort;
+		
+		
+		if(glob_order === 'ASC') {
+			glob_order = 'DESC';
+		}
+		else {
+			glob_order = 'ASC';
+		}
+		
+	}
+	else {
+		if(glob_sort) {
+			glob_sort = glob_sort;
+		}
+		else {
+			glob_sort = 'id';
+		}
+	}
+	
+	//alert(glob_sort)
+	
 	
 	var html = '';
 	
 	
-	$.getJSON(url + '?offset=' + glob_offset, function(data) {
+	$.getJSON(url + '?offset=' + glob_offset + '&sort=' + glob_sort + '&order=' + glob_order, function(data) {
 	
 		if(data.users.length >= 1) {
 			
@@ -204,5 +229,116 @@ function delete_user(id, confirmed) {
 		}
 
 	}
+	
+}
+
+
+/* Not for the ticket functionality */
+function load_tickets(action, sort) {
+	
+	var url = 'api/get_all_tickets';
+	
+	
+	$('#modal-loading').modal();
+	
+	if(action === 'prev') {
+		if((glob_offset - 10) <= 0) {
+			glob_offset = 0;
+		}
+		else {
+			glob_offset = glob_offset - 10;
+		}
+	}
+	
+	if(action === 'next') {
+		glob_offset = glob_offset + 10;
+	}
+	
+	if(sort) {
+		glob_sort = sort;
+		
+		
+		if(glob_order === 'ASC') {
+			glob_order = 'DESC';
+		}
+		else {
+			glob_order = 'ASC';
+		}
+		
+	}
+	else {
+		if(glob_sort) {
+			glob_sort = glob_sort;
+		}
+		else {
+			glob_sort = 'id';
+		}
+	}
+	
+	var html = '';
+	
+	$.getJSON(url + '?offset=' + glob_offset + '&sort=' + glob_sort + '&order=' + glob_order, function(data) {
+	
+		if(data.tickets.length >= 1) {
+			
+			$.each(data.tickets, function(i,item) {
+			
+				html = html + '<tr>';
+				html = html + '<td>'+item.id+'</td>';
+				html = html + '<td><a href="tickets/view/'+item.id+'">'+item.title+'</a></td>';
+				html = html + '<td>'+item.user_name+'</td>';
+				html = html + '<td>'+item.user_assigned_name+'</td>';
+				html = html + '<td>'+item.status+'</td>';
+				html = html + '<td><img src="'+item.category_icon+'">'+item.category_name+'</td>';
+				html = html + '<td>'+item.priority+'</td>';
+				html = html + '<td>'+item.date_received+'</td>';
+				html = html + '<td>'+item.date_resolved+'</td>';
+				html = html + '<td><div class="btn-group">';
+				html = html + '<button title="Edit ticket" onclick="edit_ticket(' + item.id + ')" class="btn"><i class="icon-pencil"></i></button>';
+				html = html + '<button title="Delete ticket" onclick="delete_ticket('+item.id+', false)" class="btn"><i class="icon-remove-sign"></i></button>';
+				html = html + '</div></td></tr>';
+				
+			});
+		}
+		
+		$('#ticket-list').html(html);
+		$('#total_tickets').html(data.total_tickets);
+		
+		$('#modal-loading').modal('hide');
+	
+	});
+	
+}
+
+function add_ticket() {
+	
+	$('#modal-add-ticket').modal();
+
+}
+
+function insert_ticket() {
+
+	var user_name = $('input[name="user_name"]').val();
+
+	if(user_name.length < 5) {
+		alert('Username must be >= 5 chars');
+		return false;
+	}
+	
+	
+	// At this point we know the form data should be fine, so we can post it over to the users controller for submission.
+	
+	$.post('tickets/add', {
+		user_name: user_name,
+		
+	}, function() {
+		$('#modal-add-user').modal('hide');
+		
+		// Empty the form item values
+		$('input[name="user_name"]').val('');
+
+		
+		load_tickets('', '')
+	});
 	
 }
