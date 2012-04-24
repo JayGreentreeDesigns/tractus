@@ -81,7 +81,7 @@ class Api extends CI_Controller {
 		$statuses = $this->config->item('status_settings');
 		$priorities = $this->config->item('priority_settings');
 		
-		$total_tickets = $this->api_model->get_user_count();
+		$total_tickets = $this->api_model->get_ticket_count();
 		
 		$formatted_tickets = array();
 		
@@ -101,8 +101,8 @@ class Api extends CI_Controller {
 					'category' => $ticket->category,
 					'priority' => $priorities[$ticket->priority],
 					'title' => $ticket->title,
-					'date_received' => date('d/m/Y H:i:s', strtotime($ticket->date_received)),
-					'date_resolved' => date('d/m/Y H:i:s', strtotime($ticket->date_resolved)),
+					'date_received' => ($ticket->date_received == '0000-00-00 00:00:00') ? '-' : date('d/m/Y H:i:s', strtotime($ticket->date_received)),
+					'date_resolved' => ($ticket->date_resolved == '0000-00-00 00:00:00') ? '-' : date('d/m/Y H:i:s', strtotime($ticket->date_resolved)),
 					'category_id' => $ticket->category_id,
 					'category_name' => $ticket->category_name,
 					'category_colour' => $ticket->category_colour,
@@ -117,6 +117,69 @@ class Api extends CI_Controller {
 		header('Content-Type: application/json');
 		
 		echo json_encode($data);
+		
+	}
+	
+	public function get_ticket_info($ticket_id = null) {
+		
+		if(!is_null($ticket_id) && !empty($ticket_id)) {
+		
+			header('Content-Type: application/json');
+			$statuses = $this->config->item('status_settings');
+		$priorities = $this->config->item('priority_settings');
+		
+			$ticket = $this->api_model->get_ticket_info($ticket_id);
+			$comments = $this->api_model->get_ticket_comments($ticket_id);
+			
+			
+			
+			$formatted_tickets = array();
+		
+			$formatted_comments = array();
+			
+			foreach($comments->result() as $comment) {
+				$formatted_comments[] = array(
+					'comment_id' => $comment->comment_id,
+					'ticket_id' => $comment->ticket_id,
+					'comment' => $comment->comment,
+					'date' => date('d/m/Y H:i:s', strtotime($comment->date)),
+					'name' => $comment->name,
+					'user_id' => $comment->user_id
+				);
+			}
+		
+		foreach($ticket->result() as $ticket) {
+			
+			$formatted_tickets[] = array(
+					'id' => $ticket->id,
+					'user_id' => $ticket->user_id,
+					'user_name' => $ticket->user_name,
+					'user_assigned' => $ticket->user_assigned,
+					'user_assigned_name' => $ticket->user_assigned_name,
+					'comments_total' => $ticket->comments_total,
+					'attachments_total' => $ticket->attachments_total,
+					'status' => $statuses[$ticket->status],
+					'status_id' => $ticket->status,
+					'category' => $ticket->category,
+					'description' => $ticket->description,
+					'description_formatted' => nl2br($ticket->description),
+					'priority' => $priorities[$ticket->priority],
+					'priority_id' => $ticket->priority,
+					'title' => $ticket->title,
+					'date_received' => ($ticket->date_received == '0000-00-00 00:00:00') ? '-' : date('d/m/Y H:i:s', strtotime($ticket->date_received)),
+					'date_resolved' => ($ticket->date_resolved == '0000-00-00 00:00:00') ? '-' : date('d/m/Y H:i:s', strtotime($ticket->date_resolved)),
+					'category_id' => $ticket->category_id,
+					'category_name' => $ticket->category_name,
+					'category_colour' => $ticket->category_colour,
+					'category_icon' => base_url().'public/img/icons/'.$ticket->category_icon,
+					'comments' => $formatted_comments
+			);
+			
+		}
+		
+		echo json_encode($formatted_tickets);
+			
+		}
 		
 	}
 }

@@ -97,6 +97,8 @@ tractus_tickets.user_assigned,
 
 (SELECT COUNT(attachment_id) FROM tractus_tickets_attachments WHERE tractus_tickets_attachments.attachment_id = tractus_tickets.id) as attachments_total,
 
+tractus_tickets.description,
+
 tractus_tickets.status,
 tractus_tickets.category,
 tractus_tickets.priority,
@@ -125,7 +127,81 @@ GROUP BY tractus_tickets.id ORDER BY ".$sort." ".$order." LIMIT ".$offset.", 10"
 	
 	function get_ticket_count() {
 		$this->db->select('id');
-		$q = $this->db->get('tractust_tickets');
+		$q = $this->db->get('tractus_tickets');
 		return $q->num_rows();
 	}
+	
+	
+	function get_ticket_info($ticket_id) {
+	
+		$sql = "SELECT
+tractus_tickets.id,
+
+tractus_tickets.user_id,
+
+(SELECT name FROM tractus_users WHERE id = tractus_tickets.user_id) as user_name,
+
+tractus_tickets.user_assigned,
+(SELECT name FROM tractus_users WHERE id = tractus_tickets.user_assigned) as user_assigned_name,
+
+(SELECT COUNT(comment_id) FROM tractus_tickets_comments WHERE tractus_tickets_comments.comment_id = tractus_tickets.id) as comments_total,
+
+(SELECT COUNT(attachment_id) FROM tractus_tickets_attachments WHERE tractus_tickets_attachments.attachment_id = tractus_tickets.id) as attachments_total,
+
+tractus_tickets.description,
+
+tractus_tickets.status,
+tractus_tickets.category,
+tractus_tickets.priority,
+
+tractus_tickets_categories.category_id,
+tractus_tickets_categories.category_name,
+tractus_tickets_categories.category_colour,
+tractus_tickets_categories.category_icon,
+
+tractus_tickets.title,
+tractus_tickets.date_received,
+tractus_tickets.date_resolved
+
+
+FROM tractus_tickets
+
+LEFT JOIN tractus_tickets_categories on tractus_tickets.category = tractus_tickets_categories.category_id
+
+
+WHERE tractus_tickets.id = '".$ticket_id."'
+
+
+GROUP BY tractus_tickets.id LIMIT 0, 1
+";
+		
+		
+		
+		$query = $this->db->query($sql);
+		
+		return $query;
+		
+	}
+	
+	function get_ticket_comments($id) {
+	
+		$sql = "SELECT tractus_tickets_comments.*,
+
+tractus_users.name
+
+from tractus_tickets_comments
+
+
+LEFT JOIN tractus_users ON tractus_tickets_comments.user_id = tractus_users.id
+
+
+where tractus_tickets_comments.ticket_id = ".$id." GROUP BY tractus_tickets_comments.date ORDER BY date DESC";
+
+	$query = $this->db->query($sql);
+		
+		return $query;
+		
+
+	}
+	
 }

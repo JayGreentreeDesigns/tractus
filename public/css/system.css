@@ -5,3 +5,13 @@
 /* All Other Styles */
 .header-smaller {font-size: 20px; font-weight: normal; padding-left: 20px;}
 .header-smaller-right {float: right}
+
+.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
+.ui-timepicker-div dl{ text-align: left; }
+.ui-timepicker-div dl dt{ height: 25px; }
+.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+
+
+span#comment-meta {font-weight: normal; margin-left: 20px;}
+div#comment {background: #eee; border-bottom: 1px solid #ccc; padding: 10px;}

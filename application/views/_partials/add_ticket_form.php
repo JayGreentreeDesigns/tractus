@@ -64,12 +64,12 @@
  			
  			
  			<label>Received</label>
-  			<input type="text" class="span3" name="ticket_received" id="ticket_received" placeholder="">
+  			<input type="text" class="span3 datetimepicker" name="ticket_received" id="ticket_received" placeholder="">
   			<span class="help-inline">When the ticket was recieved</span>
  			
  			
  			<label>Resolved</label>
-  			<input type="text" class="span3" name="ticket_resolved" id="ticket_resolved" placeholder="">
+  			<input type="text" class="span3 datetimepicker" name="ticket_resolved" id="ticket_resolved" placeholder="">
   			<span class="help-inline">When the ticket was resolved</span>
  			
  			

@@ -1,3 +1,9 @@
+$(document).ready(function() {
+	
+	$('.datetimepicker').datetimepicker({ dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss' });
+	
+});
+
 var glob_offset = 0;
 var glob_sort = '';
 var glob_order = '';
@@ -318,10 +324,18 @@ function add_ticket() {
 
 function insert_ticket() {
 
-	var user_name = $('input[name="user_name"]').val();
+	var title = $('input[name="ticket_title"]').val();
+	var ticket_raised_by = $('select[name="ticket_raised_by"] :selected').val();
+	var ticket_assigned_to = $('select[name="ticket_assigned_to"] :selected').val();
+	var ticket_status = $('select[name="ticket_status"] :selected').val();
+	var ticket_category = $('select[name="ticket_category"] :selected').val();
+	var ticket_priority = $('select[name="ticket_priority"] :selected').val();
+	var ticket_description = $('textarea[name="ticket_description"]').val();
+	var ticket_received = $('input[name="ticket_received"]').val();
+	var ticket_resolved = $('input[name="ticket_resolved"]').val();
 
-	if(user_name.length < 5) {
-		alert('Username must be >= 5 chars');
+	if(title.length < 5) {
+		alert('Title must be >= 5 chars');
 		return false;
 	}
 	
@@ -329,16 +343,194 @@ function insert_ticket() {
 	// At this point we know the form data should be fine, so we can post it over to the users controller for submission.
 	
 	$.post('tickets/add', {
-		user_name: user_name,
+		ticket_title: title,
+		ticket_raised_by: ticket_raised_by,
+		ticket_assigned_to: ticket_assigned_to,
+		ticket_status: ticket_status,
+		ticket_category: ticket_category,
+		ticket_priority: ticket_priority,
+		ticket_description: ticket_description,
+		ticket_received: ticket_received,
+		ticket_resolved: ticket_resolved
 		
 	}, function() {
-		$('#modal-add-user').modal('hide');
+		$('#modal-add-ticket').modal('hide');
 		
 		// Empty the form item values
-		$('input[name="user_name"]').val('');
-
+		$('input[name="ticket_title"]').val('');
+		$("select[name='ticket_raised_by'] option:selected").removeAttr("selected");
+		$("select[name='ticket_assigned_to'] option:selected").removeAttr("selected");
+		$("select[name='ticket_status'] option:selected").removeAttr("selected");
+		$("select[name='ticket_category'] option:selected").removeAttr("selected");
+		$("select[name='ticket_priority'] option:selected").removeAttr("selected");
+		$('textarea[name="ticket_description"]').val('');
+		$('input[name="ticket_received"]').val('');
+		$('input[name="ticket_resolved"]').val('');
 		
 		load_tickets('', '')
+	});
+	
+}
+
+
+function edit_ticket(id) {
+	
+	$('#modal-edit-ticket').modal();
+	
+	$.getJSON('api/get_ticket_info/' + id, function(data) {
+		$('input[name="id"]').val(data[0].id);
+		$('input[name="edit_ticket_title"]').val(data[0].title);
+		$("select[name='edit_ticket_raised_by'] option[value="+data[0].user_id+"]").attr('selected', 'selected');
+		$("select[name='edit_ticket_assigned_to'] option[value="+data[0].user_assigned+"]").attr('selected', 'selected');
+		$("select[name='edit_ticket_status'] option[value="+data[0].status_id+"]").attr('selected', 'selected');
+		$("select[name='edit_ticket_category'] option[value="+data[0].category+"]").attr('selected', 'selected');
+		$("select[name='edit_ticket_priority'] option[value="+data[0].priority_id+"]").attr('selected', 'selected');
+		$('textarea[name="edit_ticket_description"]').val(data[0].description);
+		$('input[name="edit_ticket_received"]').val(data[0].date_received);
+		$('input[name="edit_ticket_resolved"]').val(data[0].date_resolved);
+	});
+	
+}
+
+
+
+function update_ticket() {
+	
+	var id = $('input[name="id"]').val();
+	var title = $('input[name="edit_ticket_title"]').val();
+	var ticket_raised_by = $('select[name="edit_ticket_raised_by"] :selected').val();
+	var ticket_assigned_to = $('select[name="edit_ticket_assigned_to"] :selected').val();
+	var ticket_status = $('select[name="edit_ticket_status"] :selected').val();
+	var ticket_category = $('select[name="edit_ticket_category"] :selected').val();
+	var ticket_priority = $('select[name="edit_ticket_priority"] :selected').val();
+	var ticket_description = $('textarea[name="edit_ticket_description"]').val();
+	var ticket_received = $('input[name="edit_ticket_received"]').val();
+	var ticket_resolved = $('input[name="edit_ticket_resolved"]').val();
+	
+	if(title.length < 5) {
+		alert('Title must be >= 5 chars');
+		return false;
+	}
+
+	$.post('tickets/edit', {
+		id: id,
+		ticket_title: title,
+		ticket_raised_by: ticket_raised_by,
+		ticket_assigned_to: ticket_assigned_to,
+		ticket_status: ticket_status,
+		ticket_category: ticket_category,
+		ticket_priority: ticket_priority,
+		ticket_description: ticket_description,
+		ticket_received: ticket_received,
+		ticket_resolved: ticket_resolved
+		
+	}, function() {
+		$('#modal-edit-ticket').modal('hide');
+		load_tickets('', '')
+	});
+		
+}
+
+
+function delete_ticket(id, confirmed) {
+	
+	if(confirmed == true) {
+		var posturl = 'tickets/delete';
+		$.post(posturl, {
+			id: id
+		},
+		function() {
+			load_tickets('', '');
+		});
+	}
+	else {
+		
+		var answer = confirm ("Are you sure you want to delete the ticket? Comments and attachments will remain, but won't be accessible.")
+		
+		if(answer) {
+			delete_ticket(id, true);
+		}
+
+	}
+	
+}
+
+function view_ticket(url, id) {
+	
+	$('#modal-loading').modal();
+	
+	$.getJSON(url + id, function(data) {
+		
+		// Place the returned data into the relevant HTML elements
+		$('#ticket_title').html(data[0].title);
+		$('#raised_by').html(data[0].user_name);
+		$('#assigned_to').html(data[0].user_assigned_name);
+		$('#status').html(data[0].status);
+		$('#category').html('<span style="padding: 5px; background:#'+data[0].category_colour+'"><img src="'+ data[0].category_icon+ '"> ' + data[0].category_name + '</span>');
+		$('#priority').html(data[0].priority);
+		$('#description').html(data[0].description_formatted);
+		$('#received').html(data[0].date_received);
+		$('#resolved').html(data[0].date_resolved);
+		
+		var html = '';
+		
+		if(data[0].comments.length >= 1) {
+			
+			$.each(data[0].comments, function(i,item) {
+			
+				html = html + '<div id="comment"><h4>'+item.name+'<span id="comment-meta">'+item.date+'</span></h4><p>'+item.comment+'</p>';
+				
+				html = html + '</div>';
+				
+			});
+			
+			$('#comments').html(html);
+		}
+		else {
+			// No comments so put in a message saying no comments
+			$('#comments').html('<p>No comments</p>');
+			
+		}
+		
+		
+	});
+	
+	// Hide the modal dialog when finished loading
+	$('#modal-loading').modal('hide');
+}
+
+function add_comment() {
+	
+	$('#modal-add-comment').modal();
+	
+}
+
+function insert_comment(url, site_url) {
+	
+	var comment = $('textarea[name="comment"]').val();
+	var ticket_id = $('input[name="ticket_id"]').val();
+	var user_id = $('input[name="user_id"]').val();
+	
+
+	if(comment.length < 5) {
+		alert('Comment must be >= 5 chars');
+		return false;
+	}
+	
+	// At this point we know the form data should be fine, so we can post it over to the users controller for submission.
+	
+	$.post(site_url + '/tickets/add_comment', {
+		ticket_id: ticket_id,
+		user_id: user_id,
+		comment: comment
+
+	}, function() {
+		$('#modal-add-comment').modal('hide');
+		
+		// Empty the form item values
+		$('textarea[name="comment"]').val('');
+
+		view_ticket(url, ticket_id)
 	});
 	
 }

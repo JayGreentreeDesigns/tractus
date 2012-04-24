@@ -45,6 +45,7 @@
 				<!-- below are the hidden forms for viewing/adding/editing users -->
 			
 			<?php $this->load->view('_partials/add_ticket_form.php', array('categories' => $categories, 'priorities' => $priorities, 'statuses' => $statuses, 'users' => $users)); ?>
+			<?php $this->load->view('_partials/edit_ticket_form.php', array('categories' => $categories, 'priorities' => $priorities, 'statuses' => $statuses, 'users' => $users)); ?>
 			
 				
 				 <script>
