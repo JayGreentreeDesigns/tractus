@@ -140,17 +140,23 @@ function insert_user(url) {
 		user_role: user_role,
 		user_summary: user_summary,
 		user_password: user_password
-	}, function() {
-		$('#modal-add-user').modal('hide');
+	}, function(data) {
+	
+		if(data.user_added === false) {
+			alert('User with email specified already exists')
+		}
+		else {
+			$('#modal-add-user').modal('hide');
 		
-		// Empty the form item values
-		$('input[name="user_name"]').val('');
-		$('input[name="user_email"]').val('');
-		$("select[name='user_role'] option:selected").removeAttr("selected");
-		$('textarea[name="user_summary"]').val('');
-		$('input[name="user_password"]').val('');
+			// Empty the form item values
+			$('input[name="user_name"]').val('');
+			$('input[name="user_email"]').val('');
+			$("select[name='user_role'] option:selected").removeAttr("selected");
+			$('textarea[name="user_summary"]').val('');
+			$('input[name="user_password"]').val('');
 		
-		load_users('api/get_all_users', '')
+			load_users('api/get_all_users', '');
+		}
 	});
 	
 }

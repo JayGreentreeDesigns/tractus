@@ -112,9 +112,10 @@
         <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-            
+            <?php if($CI->session->userdata('tractus_user_role_id') == 1) : ?>
               <li class="nav-header">Tickets</li>
               <li class="<?php if($CI->router->fetch_class() == 'tickets') { echo 'active';} ?>"><?php echo anchor('tickets', '<i class="icon-tags"></i> Tickets', ''); ?></li>
+             <?php endif; ?>
 
               
              
@@ -123,18 +124,23 @@
 
               
               <li class="nav-header">Settings</li>
-			
+              
+			 <?php if($CI->session->userdata('tractus_user_role_id') == 1) : ?>
+
 			 <li class="<?php if($CI->router->fetch_class() == 'settings' && $CI->router->fetch_method() == 'index') { echo 'active';} ?>"><?php echo anchor('settings', '<i class="icon-cog"></i> Settings', ''); ?></li>
+			<?php endif; ?>
+			
 			
 			 <li class="<?php if($CI->router->fetch_class() == 'settings' && $CI->router->fetch_method() == 'info') { echo 'active';} ?>"><?php echo anchor('settings/info', '<i class="icon-info-sign"></i> System Information', ''); ?></li>
 
 			 <li class="<?php if($CI->router->fetch_class() == 'settings' && $CI->router->fetch_method() == 'help') { echo 'active';} ?>"><?php echo anchor('settings/help', '<i class="icon-info-sign"></i> Help', ''); ?></li>
 
-              
+               <?php if($CI->session->userdata('tractus_user_role_id') == 1) : ?>
               
               <li class="nav-header">Reports</li>
 			  <li class="<?php if($CI->router->fetch_class() == 'reports') { echo 'active';} ?>"><?php echo anchor('reports', '<i class="icon-book"></i> Reports', ''); ?></li>
 
+              <?php endif; ?>
               
               <!--<li><a href="#"><i class="icon-plus"></i> Report Builder</a></li>-->
                

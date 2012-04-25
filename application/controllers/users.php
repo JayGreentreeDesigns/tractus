@@ -26,7 +26,20 @@ class Users extends CI_Controller {
 		$summary = $this->input->post('user_summary');
 		$password = $this->input->post('user_password');
 		
-		$this->users_model->add($name, $email, $role, $summary, $password);
+		$new = $this->users_model->add($name, $email, $role, $summary, $password);
+		
+		$success = array();
+		
+		if($new) {
+			$success = array('user_added' => true);
+		}
+		else {
+			$success = array('user_added' => false);
+		}
+		
+		header('Content-Type: application/json');
+		
+		echo(json_encode($success));
 		
 	}
 	
@@ -49,5 +62,17 @@ class Users extends CI_Controller {
 		
 		$this->users_model->delete($id);
 		
+	}
+	
+	public function user_exists($email = null) {
+		if(!empty($email)) {
+			$exists = $this->users_model->user_exists($email);
+			
+			$chk = array('user_exists' => $exists);
+			
+			header('Content-Type: application/json');
+			
+			echo json_encode($chk);
+		}
 	}
 }

@@ -10,7 +10,11 @@
 |
 */
 
-
+$hook['post_controller_constructor'] = array(
+                                'class'    => 'AuthenticationHook',
+                                'function' => 'HasAuth',
+                                'filename' => 'AuthenticationHook.php',
+                                'filepath' => 'hooks'                                );
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

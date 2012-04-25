@@ -28,7 +28,19 @@ class Users_model extends CI_Model {
 			'password' => sha1($password)
 		);
 		
-		$this->db->insert('tractus_users', $data);
+		// Do a select here, to see if there is a user with the email address specified, if there is, return false immediately
+		
+		$this->db->select('email');
+		$this->db->where('email', $email);
+		$q = $this->db->get('tractus_users');
+		
+		if($q->num_rows() >= 1) {
+			return false;
+		}
+		else {
+			$this->db->insert('tractus_users', $data);
+			return true;
+		}
 		
 	}
 	
@@ -54,6 +66,23 @@ class Users_model extends CI_Model {
 	function delete($id) {
 		$this->db->where('id', $id);
 		$this->db->delete('tractus_users');
+	}
+	
+	function user_exists($email) {
+		
+		$this->db->select('email');
+		$this->db->where('email', $email);
+		$q = $this->db->get('tractus_users');
+		
+		if($q->num_rows() >= 1) {
+			$exists = true;
+		}
+		else {
+			$exists = false;
+		}
+		
+		return $exists;
+		
 	}
 
 }
